@@ -1,0 +1,19 @@
+#!/bin/bash
+
+API_KEYS_JSON=$(ykman piv objects export 0x005FC103 -)
+
+if [ $? -ne 0 ] || [ -z "$API_KEYS_JSON" ]; then
+  echo "Failed to read data from yubikey, exiting..."
+  exit 1
+fi
+
+eval "$(echo "$API_KEYS_JSON" | jq -r 'to_entries[] | "export \(.key)=\(.value | @sh)"')"
+
+if [ "$#" -eq 0 ]; then
+    echo "Error: No command provided to execute." >&2
+    echo "Usage: $0 <command> [args...]" >&2
+    echo "Example: $0 terraform plan" >&2
+    exit 127
+fi
+
+exec "$@"
