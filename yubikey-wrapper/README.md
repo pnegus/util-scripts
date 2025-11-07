@@ -1,4 +1,4 @@
-# yubikey-wrapper
+# wrapper
 
 This script injects API tokens (in the default case, AWS and Cloudflare) into environment variables for a given binary.
 
@@ -12,4 +12,17 @@ Move to `/usr/local/bin` and `chmod +x` it.
 
 ```
 wrapper <executable> <args>
+```
+
+# How to import/export new data
+
+to import: 
+
+```
+ykman piv objects import <address> <filename>
+```
+
+to export:
+```
+ykman piv objects export <address> <filename>
 ```
