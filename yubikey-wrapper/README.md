@@ -2,7 +2,7 @@
 
 This script injects API tokens (in the default case, AWS and Cloudflare) into environment variables for a given binary.
 
-It reads a JSON object from address 0x005FC103 on the yubikey.
+It reads a JSON object from address 0x005FC103 on the yubikey. You can also configure it to read from another pin-protected address like 0x005FC108.
 
 # Installation:
 
