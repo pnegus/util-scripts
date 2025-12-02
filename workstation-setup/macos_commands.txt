@@ -1,4 +1,8 @@
-defaults write com.apple.finder AppleShowAllFiles TRUE; killall Finder
-defaults write com.apple.dock autohide-delay -float 0; killall Dock 
-defaults write com.apple.dock autohide-time-modifier -float 0.5; killall Dock
-defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"; killall Finder
+defaults write com.apple.dock autohide-delay -float 0
+defaults write com.apple.dock autohide-time-modifier -float 0.5
+killall Dock
+defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool YES 
+defaults write com.apple.finder ShowPathbar -bool true
+defaults write com.apple.finder AppleShowAllFiles TRUE
+killall Finder
