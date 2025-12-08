@@ -8,3 +8,7 @@ defaults write com.apple.finder AppleShowAllFiles TRUE
 killall Finder
 defaults write com.apple.screencapture location ~/Pictures/Screenshots
 mkdir ~/git
+cp ~/Library/Preferences/com.apple.symbolichotkeys.plist ~/Library/Preferences/com.apple.symbolichotkeys.plist.bak
+cp com.apple.symbolichotkeys.plist ~/Library/Preferences
+/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+killall SystemUIServer
