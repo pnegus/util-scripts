@@ -12,6 +12,3 @@ cp ~/Library/Preferences/com.apple.symbolichotkeys.plist ~/Library/Preferences/c
 cp com.apple.symbolichotkeys.plist ~/Library/Preferences
 /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
 killall SystemUIServer
-
-sudo launchctl load /Library/LaunchDaemons/com.custom.ttl.ipv4.plist
-sudo launchctl load /Library/LaunchDaemons/com.custom.ttl.ipv6.plist
