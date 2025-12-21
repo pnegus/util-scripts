@@ -9,3 +9,5 @@ function chrome-sniff() {
     --user-data-dir=/tmp/tmp-google \
     "$@"
 }
+
+export PATH="$HOME/.docker/bin:$PATH"
