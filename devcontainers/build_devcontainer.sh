@@ -10,12 +10,19 @@ fi
 
 DEVCONTAINER_LANGUAGE="$1"
 
-case "$DEVCONTAINER_LANGUAGE" in
-    golang|python|debian_generic)
+case "$1" in
+    "golang")
+        CACHE_DIR="/go/pkg/mod"
+        ;;
+    "python")
+        CACHE_DIR="/home/devuser/.cache/uv"
+        ;;
+    "debian_generic")
+        CACHE_DIR="/home/devuser/misc_cache"
         ;;
     *)
-        echo "Error: Invalid argument '$DEVCONTAINER_LANGUAGE'."
-        echo "Allowed arguments: golang, python, debian_generic"
+        echo "Invalid option: $1"
+        echo "Usage: script.sh [golang|python|debian_generic]"
         exit 1
         ;;
 esac
@@ -60,6 +67,8 @@ echo "deploying new devcontainer '$CONTAINER_NAME'..."
 SSM_PATH="/devcontainer/$DEVCONTAINER_LANGUAGE/"
 REGION="us-east-1"
 
+mkdir -p "$HOME/${CONTAINER_NAME}_cache"
+
 # run devcontainers with injected API keys using my wrapper script that pulls master API keys from my yubikey
 docker run -dt \
     --env-file <( \
@@ -72,6 +81,7 @@ docker run -dt \
         | jq -r '.Parameters[] | "\(.Name | split("/") | last)=\(.Value)"' \
     ) \
     -v "$SHARED_FOLDER:/workspace" \
+    -v "$HOME/${CONTAINER_NAME}_cache:$CACHE_DIR" \
     --security-opt=no-new-privileges \
     --name "$CONTAINER_NAME" \
     --platform "$PLATFORM" \
