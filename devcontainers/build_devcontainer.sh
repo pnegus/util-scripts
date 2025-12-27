@@ -11,11 +11,11 @@ fi
 DEVCONTAINER_LANGUAGE="$1"
 
 case "$DEVCONTAINER_LANGUAGE" in
-    golang|python)
+    golang|python|debian_generic)
         ;;
     *)
         echo "Error: Invalid argument '$DEVCONTAINER_LANGUAGE'."
-        echo "Allowed arguments: golang, python"
+        echo "Allowed arguments: golang, python, debian_generic"
         exit 1
         ;;
 esac
@@ -25,6 +25,7 @@ CONTAINER_DIR="${DEVCONTAINER_LANGUAGE}_devcontainer"
 DOCKERFILE_PATH="${CONTAINER_DIR}/Dockerfile"
 IMAGE_NAME="${CONTAINER_DIR}"
 CONTAINER_NAME="${CONTAINER_DIR}"
+SHARED_FOLDER="$HOME/git"
 
 if [ ! -d "$CONTAINER_DIR" ]; then
     echo "Error: Directory '$CONTAINER_DIR' not found."
@@ -38,6 +39,8 @@ fi
 
 echo "building image '${IMAGE_NAME}:latest' for platform ${PLATFORM}..."
 docker build \
+    --no-cache \
+    --build-context helper_scripts=helper_scripts \
     --platform "$PLATFORM" \
     -t "${IMAGE_NAME}:latest" \
     -f "$DOCKERFILE_PATH" \
@@ -54,11 +57,14 @@ fi
 
 echo "deploying new devcontainer '$CONTAINER_NAME'..."
 
+# run devcontainers with injected API keys
 docker run -dt \
+    --env-file <(ykman piv objects export 0x005FC121 - | jq -r 'to_entries[] | "\(.key)=\(.value)"') \
+    -v "$SHARED_FOLDER:/workspace" \
     --cap-add=SYS_PTRACE \
     --security-opt=no-new-privileges \
     --name "$CONTAINER_NAME" \
-    --platform linux/arm64 \
+    --platform "$PLATFORM" \
     "${IMAGE_NAME}:latest"
 
 docker ps -f name="^${CONTAINER_NAME}$"
