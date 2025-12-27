@@ -3,8 +3,8 @@
 set -e
 
 if [ "$#" -ne 1 ]; then
-    echo "Error, script accepts only one arg."
-    echo "Usage: ./build_and_deploy_devcontainer.sh <dockerfile_dir>"
+    echo "Error, script accepts only 1 argument."
+    echo "Usage: ./build_and_deploy_devcontainer.sh <language>"
     exit 1
 fi
 
@@ -57,9 +57,20 @@ fi
 
 echo "deploying new devcontainer '$CONTAINER_NAME'..."
 
-# run devcontainers with injected API keys
+SSM_PATH="/devcontainer/$DEVCONTAINER_LANGUAGE/"
+REGION="us-east-1"
+
+# run devcontainers with injected API keys using my wrapper script that pulls master API keys from my yubikey
 docker run -dt \
-    --env-file <(ykman piv objects export 0x005FC121 - | jq -r 'to_entries[] | "\(.key)=\(.value)"') \
+    --env-file <( \
+        wrapper aws ssm get-parameters-by-path \
+        --region "$REGION" \
+        --path "$SSM_PATH" \
+        --with-decryption \
+        --recursive \
+        --output json \
+        | jq -r '.Parameters[] | "\(.Name | split("/") | last)=\(.Value)"' \
+    ) \
     -v "$SHARED_FOLDER:/workspace" \
     --security-opt=no-new-privileges \
     --name "$CONTAINER_NAME" \
