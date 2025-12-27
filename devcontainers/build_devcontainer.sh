@@ -61,7 +61,6 @@ echo "deploying new devcontainer '$CONTAINER_NAME'..."
 docker run -dt \
     --env-file <(ykman piv objects export 0x005FC121 - | jq -r 'to_entries[] | "\(.key)=\(.value)"') \
     -v "$SHARED_FOLDER:/workspace" \
-    --cap-add=SYS_PTRACE \
     --security-opt=no-new-privileges \
     --name "$CONTAINER_NAME" \
     --platform "$PLATFORM" \
