@@ -11,3 +11,4 @@ function chrome-sniff() {
 }
 
 export PATH="$HOME/.docker/bin:$PATH"
+export PATH="/usr/local/aws-cli:$PATH"
