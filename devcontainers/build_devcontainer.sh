@@ -67,7 +67,7 @@ echo "deploying new devcontainer '$CONTAINER_NAME'..."
 SSM_PATH="/devcontainer/$DEVCONTAINER_LANGUAGE/"
 REGION="us-east-1"
 
-mkdir -p "$HOME/${CONTAINER_NAME}_cache"
+mkdir -p "$HOME/devcontainer_cache/${CONTAINER_NAME}_cache"
 
 # run devcontainers with injected API keys using my wrapper script that pulls master API keys from my yubikey
 docker run -dt \
@@ -81,7 +81,7 @@ docker run -dt \
         | jq -r '.Parameters[] | "\(.Name | split("/") | last)=\(.Value)"' \
     ) \
     -v "$SHARED_FOLDER:/workspace" \
-    -v "$HOME/${CONTAINER_NAME}_cache:$CACHE_DIR" \
+    -v "$HOME/devcontainer_cache/${CONTAINER_NAME}_cache:$CACHE_DIR" \
     --security-opt=no-new-privileges \
     --name "$CONTAINER_NAME" \
     --platform "$PLATFORM" \
