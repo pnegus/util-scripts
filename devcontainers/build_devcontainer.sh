@@ -64,19 +64,40 @@ fi
 
 echo "deploying new devcontainer '$CONTAINER_NAME'..."
 
-SSM_PATH="/devcontainer/$DEVCONTAINER_LANGUAGE/"
 REGION="us-east-1"
 
 mkdir -p "$HOME/devcontainer_cache/${CONTAINER_NAME}_cache"
 
-# run devcontainers with injected API keys using my wrapper script that pulls master API keys from my yubikey
+SSM_PATHS=()
+
+# Define specific SSM parameter paths for each devcontainer type
+case "$DEVCONTAINER_LANGUAGE" in
+    "golang")
+        SSM_PATHS=(
+            "/apikeys//aws"
+            "/apikeys//cloudflare"
+        )
+        ;;
+    "python")
+        SSM_PATHS=(
+            "/apikeys/APCA_SECRET"
+            "/apikeys/APCA_API_BASE_URL"
+            "/apikeys/APCA_KEY"
+            "/apikeys/GEMINI_API_KEY"
+        )
+        ;;
+    "debian_generic")
+        ;;
+esac
+
+echo "deploying new devcontainer '$CONTAINER_NAME'..."
+
 docker run -dt \
     --env-file <( \
-        wrapper aws ssm get-parameters-by-path \
+        wrapper aws ssm get-parameters \
         --region "$REGION" \
-        --path "$SSM_PATH" \
+        --names ${SSM_PATHS[@]} \
         --with-decryption \
-        --recursive \
         --output json \
         | jq -r '.Parameters[] | "\(.Name | split("/") | last)=\(.Value)"' \
     ) \

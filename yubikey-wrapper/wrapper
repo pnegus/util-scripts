@@ -1,4 +1,19 @@
-#!/bin/bash
+#!/bin/sh
+
+if [ "$1" == "dump" ]; then
+  echo "WARNING, passing dump to this utility will dump your sensitive data to stdout."
+  read -p "Are you sure you want to proceed? (y/n): " -n 1 -r
+  echo 
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+      echo "Proceeding..."
+  else
+      echo "Exiting."
+      exit 1
+  fi
+  echo $(ykman piv objects export 0x005FC103 -)
+  exit 0
+fi
 
 API_KEYS_JSON=$(ykman piv objects export 0x005FC103 -)
 

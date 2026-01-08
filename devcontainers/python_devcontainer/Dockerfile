@@ -4,7 +4,9 @@ ENV UV_LINK_MODE=copy
 
 RUN apt update && apt install -y \
     curl \
-    vim 
+    vim \
+    wget \
+    procps
 
 COPY --from=helper_scripts install_vscode_server.sh /install_vscode_server.sh
 RUN chmod +x /install_vscode_server.sh
