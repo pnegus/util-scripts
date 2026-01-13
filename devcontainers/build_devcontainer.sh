@@ -2,9 +2,9 @@
 
 set -e
 
-if [ "$#" -ne 1 ]; then
-    echo "Error, script accepts only 1 argument."
-    echo "Usage: ./build_and_deploy_devcontainer.sh <language>"
+if [ "$#" -ne 2 ]; then
+    echo "Error, script accepts 2 arguments."
+    echo "Usage: ./build_and_deploy_devcontainer.sh <language> <local | remote>"
     exit 1
 fi
 
@@ -24,6 +24,16 @@ case "$1" in
         echo "Invalid option: $1"
         echo "Usage: script.sh [golang|python|debian_generic]"
         exit 1
+        ;;
+esac
+
+
+case "$2" in
+    "local")
+        WRAPPER_COMMAND=""
+        ;;
+    *)
+        WRAPPER_COMAND="wrapper"
         ;;
 esac
 
@@ -94,7 +104,7 @@ echo "deploying new devcontainer '$CONTAINER_NAME'..."
 
 docker run -dt \
     --env-file <( \
-        wrapper aws ssm get-parameters \
+        $WRAPPER_COMMAND aws ssm get-parameters \
         --region "$REGION" \
         --names ${SSM_PATHS[@]} \
         --with-decryption \
