@@ -27,13 +27,13 @@ case "$1" in
         ;;
 esac
 
+WRAPPER_COMMAND="wrapper"
 
 case "$2" in
-    "local")
+    "remote")
         WRAPPER_COMMAND=""
         ;;
     *)
-        WRAPPER_COMAND="wrapper"
         ;;
 esac
 
